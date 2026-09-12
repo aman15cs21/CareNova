@@ -31,7 +31,7 @@ app.use(express.json());
 
 // Default Test Route
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "HealthCheck AI Backend is running..." });
+  res.status(200).json({ message: "CareNova Backend is running..." });
 });
 
 // Routes

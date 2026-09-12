@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="brand-mark__icon">
               <span>✦</span>
             </div>
-            <h2>health<span>check</span></h2>
+            <h2>Care<span>Nova</span></h2>
           </div>
           <p>
             Advanced AI-powered health diagnosis platform designed to help you understand your symptoms and make informed health decisions.
@@ -54,7 +54,7 @@ export default function Footer() {
       <div className="site-footer__bottom">
         <div>
           <p>
-            &copy; 2024 HealthCheck AI. All rights reserved.
+            &copy; 2024 CareNova. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors text-sm">Facebook</a>

@@ -1,6 +1,6 @@
 # Production readiness
 
-HealthCheck AI is split into three deployable services:
+CareNova is split into three deployable services:
 
 - `frontend/`: React/Vite application
 - `backend/`: Express prediction API

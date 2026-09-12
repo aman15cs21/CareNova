@@ -1,4 +1,4 @@
-# HealthCheck AI - Disease Prediction System
+# CareNova - Disease Prediction System
 
 A full-stack web application that uses AI/ML to predict diseases based on symptoms and vital signs.
 
