@@ -1,18 +1,22 @@
 import pickle
+import os
 import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
+from pathlib import Path
 
 app = Flask(__name__)
 CORS(app)
 
+MODEL_DIR = Path(__file__).resolve().parent
+
 # Load the trained model and label encoder
 try:
-    with open('my_model.pkl', 'rb') as model_file:
+    with open(MODEL_DIR / 'my_model.pkl', 'rb') as model_file:
         model = pickle.load(model_file)
     
-    with open('label_encoder.pkl', 'rb') as encoder_file:
+    with open(MODEL_DIR / 'label_encoder.pkl', 'rb') as encoder_file:
         label_encoder = pickle.load(encoder_file)
     
     print("✅ Model and encoder loaded successfully!")
@@ -122,5 +126,6 @@ if __name__ == '__main__':
     print("🚀 Starting Disease Prediction Model Server...")
     print(f"📊 Model loaded: {model is not None}")
     print(f"🔤 Encoder loaded: {label_encoder is not None}")
-    print("🌐 Server will run on http://localhost:5000")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    port = int(os.environ.get('MODEL_PORT', os.environ.get('PORT', 5000)))
+    print(f"🌐 Server will run on port {port}")
+    app.run(host='0.0.0.0', port=port, debug=False)

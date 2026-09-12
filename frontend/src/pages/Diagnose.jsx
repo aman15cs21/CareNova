@@ -31,7 +31,7 @@ const Diagnose = () => {
       try {
         const health = await checkServiceHealth();
         setServiceStatus(health);
-      } catch (error) {
+      } catch {
         setServiceStatus({ backend: "error", model_service: "unavailable" });
       }
     };

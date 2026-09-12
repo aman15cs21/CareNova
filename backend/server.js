@@ -2,25 +2,25 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Import Routes
-import authRoutes from "./routes/auth.js";
-import googleAuthRoutes from "./routes/google.js";
 import predictRoutes from "./routes/predict.js";
-import doctorsRoutes from "./routes/doctors.js";
-import historyRoutes from "./routes/history.js";
 
-dotenv.config();
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+dotenv.config({ path: path.join(projectRoot, ".env") });
 
 const app = express();
 
 // Middlewares
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(cors({
- origin: [
-    "http://localhost:5173",
-    "https://healthchecka.netlify.app"
-  ], 
-  // React (Vite) frontend URL
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
@@ -30,8 +30,22 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "HealthCheck AI Backend is running..." });
 });
 
-// Database Connection + Start Server
-const startServer = async () => {
+// Routes
+app.use("/api/predict", predictRoutes);
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Keep the API available for non-DB routes even if MongoDB is offline.
+const connectDatabase = async () => {
+  if (!process.env.MONGO_URI) {
+    console.log("MongoDB URI not configured; continuing without database.");
+    return;
+  }
+
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       dbName: "healthcheck",
@@ -40,22 +54,9 @@ const startServer = async () => {
     });
 
     console.log("MongoDB Connected");
-
-    const PORT = process.env.PORT || 4000;
-    app.listen(PORT, () =>
-      console.log(`🚀 Server running on port ${PORT}`)
-    );
-
   } catch (error) {
-    console.error("❌ MongoDB Error:", error);
+    console.error("MongoDB unavailable:", error.message);
   }
 };
 
-// Attach Routes After DB Connects
-app.use("/api/auth", authRoutes);            // email/password signup & login
-app.use("/api/auth/google", googleAuthRoutes); // google login
-app.use("/api/predict", predictRoutes);      // AI prediction
-app.use("/api/doctors", doctorsRoutes);      // doctors list API
-app.use("/api/history", historyRoutes);      // diagnosis history
-
-startServer();
+connectDatabase();

@@ -3,7 +3,5 @@ flask-cors==6.0.2
 # Pin compatible versions to avoid NumPy/Pandas ABI mismatch on Windows
 numpy==1.26.4
 pandas==2.2.3
-# scikit-learn compatible with NumPy 1.26
-scikit-learn==1.5.2
-# Gunicorn is for Linux; optional here
-gunicorn==23.0.0
+# Existing pickle model was saved with scikit-learn 1.2.2.
+scikit-learn==1.2.2

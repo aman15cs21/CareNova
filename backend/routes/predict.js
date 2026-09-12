@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
     }
 
     // Construct prediction URL properly
-    const aiServiceUrl = process.env.AI_SERVICE_URL;
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:5000";
     const predictUrl = aiServiceUrl.endsWith('/predict')
       ? aiServiceUrl
       : `${aiServiceUrl}/predict`;
@@ -73,6 +73,7 @@ router.post("/", async (req, res) => {
 
     const response = await axios.post(predictUrl, {
       symptoms,
+      healthData,
     }, {
       timeout: 10000, // 10 second timeout
       headers: {
@@ -117,7 +118,7 @@ router.post("/", async (req, res) => {
 router.get("/health", async (req, res) => {
   try {
     // Construct health check URL properly
-    const aiServiceUrl = process.env.AI_SERVICE_URL;
+    const aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:5000";
     const healthUrl = aiServiceUrl.endsWith('/predict')
       ? aiServiceUrl.replace('/predict', '/health')
       : `${aiServiceUrl}/health`;
