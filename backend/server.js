@@ -14,8 +14,12 @@ dotenv.config({ path: path.join(projectRoot, ".env") });
 const app = express();
 
 // Middlewares
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
-  .split(",")
+const defaultFrontendOrigins = [
+  "http://localhost:5173",
+  "https://care-nova-iota.vercel.app",
+];
+const allowedOrigins = [...defaultFrontendOrigins, ...(process.env.FRONTEND_URL || "")
+  .split(",")]
   .map((origin) => origin.trim())
   .filter(Boolean);
 
