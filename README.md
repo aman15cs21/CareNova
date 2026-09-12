@@ -2,12 +2,54 @@
 
 A full-stack web application that uses AI/ML to predict diseases based on symptoms and vital signs.
 
+## ⚡ Start Locally
+
+From the project root, install dependencies once:
+
+```bash
+cd /f/minor\ project
+cp .env.example .env
+cd frontend
+npm install
+cd ../backend
+npm install
+cd disease_model
+python -m venv ../../.venv
+../../.venv/Scripts/python.exe -m pip install -r requirements.txt
+```
+
+Open three terminals and start the services:
+
+**Terminal 1 — Flask model service**
+
+```bash
+cd /f/minor\ project
+cd backend/disease_model
+../../.venv/Scripts/python.exe model_server.py
+```
+
+**Terminal 2 — Express backend**
+
+```bash
+cd /f/minor\ project
+cd backend
+npm start
+```
+
+**Terminal 3 — React frontend**
+
+```bash
+cd /f/minor\ project
+cd frontend
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser. The backend runs on port `4000` and the model service runs on port `5000`.
+
 ## 🚀 Features
 
 - **AI-Powered Diagnosis**: Machine learning model for disease prediction
 - **Comprehensive Health Assessment**: Vital signs and symptom analysis
-- **User Authentication**: Email/password and Google OAuth
-- **Doctor Consultation**: Integrated doctor finding system
 - **Responsive Design**: Mobile-friendly interface
 - **Real-time Health Monitoring**: Service status indicators
 
@@ -18,7 +60,6 @@ A full-stack web application that uses AI/ML to predict diseases based on sympto
 - Tailwind CSS for styling
 - React Router for navigation
 - Axios for API calls
-- Google OAuth integration
 
 ### Backend
 - Node.js with Express
@@ -74,9 +115,7 @@ A full-stack web application that uses AI/ML to predict diseases based on sympto
    cd backend
    npm install
    
-   # Copy environment template and fill in your values
-   cp .env.example .env
-   # Edit .env with your MongoDB URI, JWT secret, etc.
+   # The shared .env file is created from .env.example in the Start Locally section
    ```
 
 3. **Setup Frontend**
@@ -103,7 +142,7 @@ A full-stack web application that uses AI/ML to predict diseases based on sympto
 2. **Start the AI Model Service**
    ```bash
    cd backend/disease_model
-   python mock_model_server.py
+   python model_server.py
    # Service runs on http://localhost:5000
    ```
 
@@ -116,30 +155,26 @@ A full-stack web application that uses AI/ML to predict diseases based on sympto
 
 ## 🔧 Environment Variables
 
-Create a `.env` file in the backend directory:
+Create one `.env` file in the repository root. It is shared by the frontend and backend:
 
 ```env
-MONGO_URI=your_mongodb_connection_string
+VITE_BACKEND_URL=http://localhost:4000
+VITE_FRONTEND_URL=http://localhost:5173
 PORT=4000
-JWT_SECRET=your_jwt_secret_key
-GOOGLE_CLIENT_ID=your_google_oauth_client_id
-AI_SERVICE_URL=http://localhost:5000/predict
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:4000
+AI_SERVICE_URL=http://localhost:5000
+MONGO_URI=
 ```
 
 ## 🧪 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/google` - Google OAuth login
 
 ### Prediction
 - `POST /api/predict` - Disease prediction
 - `GET /api/predict/health` - Service health check
 
 ### Other
-- `GET /api/doctors` - Get doctors list
-- `GET /api/history` - User's diagnosis history
+
 
 ## 🤖 ML Model
 
@@ -150,17 +185,31 @@ The system uses a trained machine learning model that analyzes:
 
 ## 🚀 Deployment
 
-### Option 1: Vercel + Railway
-1. Deploy frontend to Vercel
-2. Deploy backend to Railway
-3. Deploy ML service to Railway or Heroku
+Recommended free deployment:
 
-### Option 2: Heroku
-1. Create three Heroku apps (frontend, backend, ML service)
-2. Configure environment variables
-3. Deploy using Git
+1. **Netlify** for the React frontend.
+2. **Render Web Service** for the combined Express backend and Flask model.
 
-See `DEPLOYMENT.md` for detailed deployment instructions.
+The repository includes `netlify.toml` for the frontend and `render.yaml` for the combined backend service. A Dockerfile packages Node.js and Python together, and the Flask model runs privately inside the same Render service, so users need only one public backend URL.
+
+Deploy the frontend, Express backend, and Flask model service as separate services.
+Do not deploy `.env`; set environment variables in the hosting provider:
+
+- Netlify frontend: `VITE_BACKEND_URL`
+- Backend: `AI_SERVICE_URL`, `FRONTEND_URL`, and `PORT`
+- Optional backend database: `MONGO_URI`
+
+After deployment, set these values:
+
+```text
+Netlify VITE_BACKEND_URL=https://<your-backend>.onrender.com
+Render backend FRONTEND_URL=https://<your-site>.netlify.app
+Render backend AI_SERVICE_URL=http://127.0.0.1:5000
+```
+
+Free Render services can sleep when inactive, so the first request after inactivity may be slow. Netlify serves the frontend quickly; paid always-on backend/model instances are required for consistently fast API responses.
+
+See `PRODUCTION_READINESS.md` for deployment variables and verification steps.
 
 ## 🤝 Contributing
 
